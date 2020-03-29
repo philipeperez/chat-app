@@ -1,15 +1,21 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex, { MutationTree, StoreOptions } from 'vuex';
+import { RootState } from '@/store/types';
+import {User} from "@/types";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const mutations: MutationTree<RootState> = {
+  setNewUser(state: RootState, newUser: User) {
+    state.user = newUser;
+  },
+};
+
+const store: StoreOptions<RootState> = {
   state: {
+    user: null,
   },
-  mutations: {
-  },
-  actions: {
-  },
-  modules: {
-  },
-});
+  mutations,
+};
+
+export default new Vuex.Store<RootState>(store);

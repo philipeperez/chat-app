@@ -29,21 +29,24 @@
 
   @Component({})
   export default class Login extends Vue {
-    private valid = false;
-    private nameRules = [
+    private valid: Boolean = false;
+    private nameRules: Function[] = [
       (v: string | null): boolean | string => !!v || 'Username is required',
       (v: string | null): boolean | string => (!!v && v.length <= 20) || 'Username must be less than 20 characters',
     ];
 
     get user(): string | null {
-      return this.$store.state.user;
+      if (this.$store.state.user) {
+        return this.$store.state.user.name;
+      }
+      return ''
     }
 
     set user(newUser: string | null) {
-      this.$store.commit('setNewUser', newUser);
+      this.$store.commit('setNewUser', {name: newUser});
     }
 
-    login() {
+    public login(): void {
       if (this.valid) {
         this.$router.push('/chat');
       }

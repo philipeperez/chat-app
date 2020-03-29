@@ -33,17 +33,17 @@
     }
   })
   export default class ChatPage extends Vue {
-    private socket: any | null = null;
+    private socket: SocketIOClient.Socket | null = null;
     private messages: Message[] = [];
     private msgToSend: string = '';
     private users: User[] = [];
 
-    created() {
+    mounted() {
       if (!this.user) {
         this.$router.push('/');
         return;
       }
-      this.socket = io('https://chat-app-nestjs-vue.herokuapp.com/', {query: `user=${this.user}`});
+      this.socket = io('https://chat-app-nestjs-vue.herokuapp.com/', {query: `user=${this.user.name}`});
       this.socket.on('connect', () => {
         console.log('Conectado');
       });
@@ -53,18 +53,18 @@
       this.socket.on('userDisconnected', this.onUserDisconnected);
     }
 
-    get user(): string {
+    get user(): User {
       return this.$store.state.user;
     }
 
     receiveMessage(msg: Message) {
-      msg.type = MessageType.Message
+      msg.type = MessageType.Message;
       this.messages.push(msg);
     }
 
     sendMessage() {
       if (this.msgToSend !== '') {
-        this.socket.emit('msgToServer', this.msgToSend);
+        this.socket?.emit('msgToServer', this.msgToSend);
         this.msgToSend = '';
       }
     }

@@ -12,7 +12,6 @@
         @click:append-outer="sendMessage"
         @keyup.enter="sendMessage"
         v-model="msgToSend"
-        :rules="msgRules"
         label="Message"
         required/>
     </v-bottom-navigation>
@@ -21,7 +20,7 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
-  import io from 'socket.io-client';
+  // import io from 'socket.io-client';
   import ChatBox from '@/components/ChatBox.vue';
   import OnlineUserList from '@/components/OnlineUserList.vue';
   import {Message, MessageType, User} from '../types';
@@ -33,7 +32,7 @@
     }
   })
   export default class ChatPage extends Vue {
-    private socket: SocketIOClient.Socket | null = null;
+    // private socket: SocketIOClient.Socket | null = null;
     private messages: Message[] = [];
     private msgToSend: string = '';
     private users: User[] = [];
@@ -43,14 +42,18 @@
         this.$router.push('/');
         return;
       }
-      this.socket = io('https://chat-app-nestjs-vue.herokuapp.com/', {query: `user=${this.user.name}`});
-      this.socket.on('connect', () => {
-        console.log('Conectado');
-      });
+      // this.socket = io('https://chat-app-nestjs-vue.herokuapp.com/', {query: `user=${this.user.name}`});
+      // this.socket.on('connect', () => {
+      //   console.log('Conectado');
+      // });
       this.socket.on('msgToClient', this.receiveMessage);
       this.socket.on('onlineUserlistUpdated', this.onChangeUserList);
       this.socket.on('userConnected', this.onUserConnected);
       this.socket.on('userDisconnected', this.onUserDisconnected);
+    }
+
+    get socket(): SocketIOClient.Socket {
+      return this.$store.state.socket
     }
 
     get user(): User {

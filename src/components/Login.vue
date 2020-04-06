@@ -19,36 +19,39 @@
         :counter="20"
         label="Username"
         required/>
-      <v-btn type="submit" block color="success">Login</v-btn>
+      <v-btn :loading="isLoading" type="submit" block color="success">Login</v-btn>
     </v-form>
   </v-card>
 </template>
 
 <script lang="ts">
-  import {Component, Vue} from 'vue-property-decorator';
+  import {Component, Prop, Vue} from 'vue-property-decorator';
 
   @Component({})
   export default class Login extends Vue {
+    @Prop({default: false}) readonly isLoading!: Boolean;
     private valid: Boolean = false;
+    private user: string = '';
     private nameRules: Function[] = [
       (v: string | null): boolean | string => !!v || 'Username is required',
       (v: string | null): boolean | string => (!!v && v.length <= 20) || 'Username must be less than 20 characters',
     ];
 
-    get user(): string | null {
-      if (this.$store.state.user) {
-        return this.$store.state.user.name;
-      }
-      return ''
-    }
-
-    set user(newUser: string | null) {
-      this.$store.commit('setNewUser', {name: newUser});
-    }
+    // get user(): string | null {
+    //   if (this.$store.state.user) {
+    //     return this.$store.state.user.name;
+    //   }
+    //   return ''
+    // }
+    //
+    // set user(newUser: string | null) {
+    //   this.$store.commit('setNewUser', {name: newUser});
+    // }
 
     public login(): void {
       if (this.valid) {
-        this.$router.push('/chat');
+        this.$emit('login', this.user)
+        // this.$router.push('/chat');
       }
     }
   }

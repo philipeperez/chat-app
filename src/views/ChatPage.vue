@@ -20,10 +20,9 @@
 
 <script lang="ts">
   import {Component, Vue} from 'vue-property-decorator';
-  // import io from 'socket.io-client';
   import ChatBox from '@/components/ChatBox.vue';
   import OnlineUserList from '@/components/OnlineUserList.vue';
-  import {Message, MessageType, User} from '../types';
+  import {Message, User} from '../types';
 
   @Component({
     components: {
@@ -32,24 +31,20 @@
     }
   })
   export default class ChatPage extends Vue {
-    // private socket: SocketIOClient.Socket | null = null;
-    private messages: Message[] = [];
     private msgToSend: string = '';
-    private users: User[] = [];
 
-    mounted() {
+    created() {
       if (!this.user) {
         this.$router.push('/');
         return;
       }
-      // this.socket = io('https://chat-app-nestjs-vue.herokuapp.com/', {query: `user=${this.user.name}`});
-      // this.socket.on('connect', () => {
-      //   console.log('Conectado');
-      // });
-      this.socket.on('msgToClient', this.receiveMessage);
-      this.socket.on('onlineUserlistUpdated', this.onChangeUserList);
-      this.socket.on('userConnected', this.onUserConnected);
-      this.socket.on('userDisconnected', this.onUserDisconnected);
+    }
+
+    sendMessage(): void {
+      if (this.msgToSend !== '') {
+        this.socket?.emit('msgToServer', this.msgToSend);
+        this.msgToSend = '';
+      }
     }
 
     get socket(): SocketIOClient.Socket {
@@ -60,30 +55,12 @@
       return this.$store.state.user;
     }
 
-    receiveMessage(msg: Message) {
-      msg.type = MessageType.Message;
-      this.messages.push(msg);
+    get messages (): Message[] {
+      return this.$store.state.messages
     }
 
-    sendMessage() {
-      if (this.msgToSend !== '') {
-        this.socket?.emit('msgToServer', this.msgToSend);
-        this.msgToSend = '';
-      }
-    }
-
-    private onChangeUserList(users: User[]) {
-      this.users = users
-    }
-
-    private onUserConnected(msg: Message) {
-      msg.type = MessageType.UserConnected;
-      this.messages.push(msg)
-    }
-
-    private onUserDisconnected(msg: Message) {
-      msg.type = MessageType.UserDisconnected;
-      this.messages.push(msg)
+    get users (): User[] {
+      return this.$store.state.onlineUsers
     }
   }
 </script>

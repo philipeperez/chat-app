@@ -8,7 +8,7 @@
       flat>
       <v-toolbar-title>Login Form</v-toolbar-title>
     </v-toolbar>
-    <v-form v-model="valid" @submit="login" class="pa-3">
+    <v-form v-model="valid" @submit.prevent="login" class="pa-3">
       <v-text-field
         autofocus
         class="mb-5"

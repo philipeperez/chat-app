@@ -26,24 +26,21 @@
   export default class Home extends Vue {
     private isLoading: Boolean = false;
 
-    @Watch('user')
-    onLogin(newUser: User | null) {
-      if (!newUser) return;
-      const socket: SocketIOClient.Socket = io('https://chat-app-nestjs-vue.herokuapp.com/', {query: `user=${newUser.name}`});
-      this.$store.commit('setSocket', socket);
-      socket.on('connect', () => {
-        this.isLoading = false;
-        this.$router.push('/chat');
-      });
-    }
-
     login(user: string): void {
       this.isLoading = true;
-      this.$store.commit('setNewUser', {name: user});
+      this.$store.dispatch('connect', {name: user});
     }
 
-    get user(): User | null {
-      return this.$store.state.user;
+    @Watch('connected')
+    onSocketConnect (newVal: Boolean | undefined): void {
+      if (newVal) {
+        this.isLoading = false;
+        this.$router.push('/chat');
+      }
+    }
+
+    get connected (): Boolean | undefined {
+      return this.$store.state.socket?.connected
     }
   }
 </script>

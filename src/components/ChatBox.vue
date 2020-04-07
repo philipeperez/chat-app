@@ -23,7 +23,7 @@
               <v-list-item v-for="(msg, n) in messages" :key="n">
                 <v-list-item-content>
                   <v-alert v-if="verifyMessageType(msg)" class="text-left grey lighten-3">
-                    <strong>{{ msg.user.name }} says:</strong> {{ msg.txt }}
+                    <strong>{{msg.time  | moment("HH:mm")}} - {{ msg.user.name }}:</strong> {{ msg.txt }}
                   </v-alert>
                   <v-alert dark dense v-else :color="getType(msg)" class="text-center">
                     {{ msg.user.name }} {{ msg.txt }}
